@@ -1,0 +1,106 @@
+{
+  "blocks": [
+    {
+      "m_type": "Air",
+      "id": 0,
+      "opaque": false,
+      "has_texture": false,
+      "light_emission": 0
+    },
+    {
+      "m_type": "Dirt",
+      "id": 1,
+      "opaque": true,
+      "has_texture": true,
+      "texture_top": [2, 0],
+      "texture_bottom": [2, 0],
+      "texture_front": [2, 0],
+      "texture_back": [2, 0],
+      "texture_left": [2, 0],
+      "texture_right": [2, 0],
+      "light_emission": 0
+    },
+    {
+      "m_type": "DiamondOre",
+      "id": 2,
+      "opaque": true,
+      "has_texture": true,
+      "texture_top": [2, 3],
+      "texture_bottom": [2, 3],
+      "texture_front": [2, 3],
+      "texture_back": [2, 3],
+      "texture_left": [2, 3],
+      "texture_right": [2, 3],
+      "light_emission": 0
+    },
+    {
+      "m_type": "RedstoneOre",
+      "id": 3,
+      "opaque": true,
+      "has_texture": true,
+      "texture_top": [3, 3],
+      "texture_bottom": [3, 3],
+      "texture_front": [3, 3],
+      "texture_back": [3, 3],
+      "texture_left": [3, 3],
+      "texture_right": [3, 3],
+      "light_emission": 0
+    },
+    {
+      "m_type": "Pumpkin",
+      "id": 4,
+      "opaque": true,
+      "has_texture": true,
+      "texture_top": [6, 6],
+      "texture_bottom": [6, 7],
+      "texture_front": [7, 7],
+      "texture_back": [6, 7],
+      "texture_left": [6, 7],
+      "texture_right": [6, 7],
+      "light_emission": 0
+    },
+    {
+      "m_type": "JackOLantern",
+      "id": 5,
+      "opaque": true,
+      "has_texture": true,
+      "texture_top": [6, 6],
+      "texture_bottom": [6, 7],
+      "texture_front": [8, 7],
+      "texture_back": [6, 7],
+      "texture_left": [6, 7],
+      "texture_right": [6, 7],
+      "light_emission": 1285.0,
+      "light_color": [187, 100, 25]
+    },
+    {
+      "m_type": "Torch",
+      "id": 6,
+      "opaque": false,
+      "has_texture": true,
+      "texture_top": [2, 13],
+      "texture_bottom": [4, 0],
+      "texture_front": [0.45, 5.4],
+      "texture_back": [0.45, 5.4],
+      "texture_left": [0.45, 5.4],
+      "texture_right": [0.45, 5.4],
+      "scale_x": 0.1,
+      "scale_y": 0.6,
+      "light_emission": 387.0,
+      "light_color": [128, 100, 25]
+    },
+    {
+      "m_type": "Grass",
+      "id": 7,
+      "opaque": true,
+      "has_texture": true,
+      "texture_top": [0, 0],
+      "texture_bottom": [2, 0],
+      "texture_front": [3, 0],
+      "texture_back": [3, 0],
+      "texture_left": [3, 0],
+      "texture_right": [3, 0],
+      "light_emission": 0
+    }
+  ]
+}

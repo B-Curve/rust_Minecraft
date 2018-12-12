@@ -1,0 +1,13 @@
+[package]
+name = "gl"
+version = "0.1.0"
+authors = ["Brandon Kervin <brandonkervin@gmail.com>"]
+
+[build-dependencies]
+gl_generator = "0.9.0"
+gl_generator_profiling_struct = "0.1.2"
+khronos_api = "2.2.0"
+lazy_static = "1.2.0"
+
+[features]
+debug = []
