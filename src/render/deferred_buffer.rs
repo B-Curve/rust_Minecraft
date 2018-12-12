@@ -104,6 +104,10 @@ impl DeferredBuffer {
         }
     }
 
+    pub fn shader(&self) -> &Shader {
+        &self.shader
+    }
+
     fn draw_quad(&self) {
         unsafe {
             self.gl.BindVertexArray(self.vao);

@@ -9,6 +9,7 @@ use serde_json::Error;
 use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
+use std::rc::Rc;
 
 const BLOCK_DEFINITION_SOURCE: &'static str = "./metadata/blocks.json";
 
@@ -42,11 +43,15 @@ impl BlockDatabase {
             .expect(&format!("Failed to parse contents to string for file: {}", BLOCK_DEFINITION_SOURCE))
     }
 
-    pub fn get_block(&self, id: BlockType) -> &Block {
-        self.blocks.get(&id).unwrap()
+    pub fn get_block(&self, id: BlockType) -> Rc<Block> {
+        unsafe {
+            Rc::from_raw(self.blocks.get(&id).unwrap())
+        }
     }
 
-    pub fn unwrap_block(&self, id: Option<&BlockType>) -> &Block {
-        self.blocks.get(id.unwrap_or(&BlockType::Air)).unwrap()
+    pub fn unwrap_block(&self, id: Option<&BlockType>) -> Rc<Block> {
+        unsafe {
+            Rc::from_raw(self.blocks.get(id.unwrap_or(&BlockType::Air)).unwrap())
+        }
     }
 }

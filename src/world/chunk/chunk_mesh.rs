@@ -32,42 +32,42 @@ impl ChunkMesh {
 
             if block.has_sub1_scale() || !right.opaque {
                 let (mut verts, mut inds) = block.build_right_face(
-                    &Vec3i::new(x,y,z), current_stride);
+                    &Vec3i::new(x,y,z), current_stride, true);
                 vertices.append(&mut verts);
                 indices.append(&mut inds);
                 current_stride += index_stride;
             }
             if block.has_sub1_scale() || !left.opaque {
                 let (mut verts, mut inds) = block.build_left_face(
-                    &Vec3i::new(x,y,z), current_stride);
+                    &Vec3i::new(x,y,z), current_stride, true);
                 vertices.append(&mut verts);
                 indices.append(&mut inds);
                 current_stride += index_stride;
             }
             if block.has_sub1_scale() || !top.opaque {
                 let (mut verts, mut inds) = block.build_top_face(
-                    &Vec3i::new(x,y,z), current_stride);
+                    &Vec3i::new(x,y,z), current_stride, true);
                 vertices.append(&mut verts);
                 indices.append(&mut inds);
                 current_stride += index_stride;
             }
             if block.has_sub1_scale() || !bottom.opaque {
                 let (mut verts, mut inds) = block.build_bottom_face(
-                    &Vec3i::new(x,y,z), current_stride);
+                    &Vec3i::new(x,y,z), current_stride, true);
                 vertices.append(&mut verts);
                 indices.append(&mut inds);
                 current_stride += index_stride;
             }
             if block.has_sub1_scale() || !front.opaque {
                 let (mut verts, mut inds) = block.build_front_face(
-                    &Vec3i::new(x,y,z), current_stride);
+                    &Vec3i::new(x,y,z), current_stride, true);
                 vertices.append(&mut verts);
                 indices.append(&mut inds);
                 current_stride += index_stride;
             }
             if block.has_sub1_scale() || !back.opaque {
                 let (mut verts, mut inds) = block.build_back_face(
-                    &Vec3i::new(x,y,z), current_stride);
+                    &Vec3i::new(x,y,z), current_stride, true);
                 vertices.append(&mut verts);
                 indices.append(&mut inds);
                 current_stride += index_stride;

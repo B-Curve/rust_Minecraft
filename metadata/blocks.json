@@ -70,7 +70,7 @@
       "texture_back": [6, 7],
       "texture_left": [6, 7],
       "texture_right": [6, 7],
-      "light_emission": 1285.0,
+      "light_emission": 4245.0,
       "light_color": [187, 100, 25]
     },
     {
@@ -86,7 +86,7 @@
       "texture_right": [0.45, 5.4],
       "scale_x": 0.1,
       "scale_y": 0.6,
-      "light_emission": 387.0,
+      "light_emission": 1235.0,
       "light_color": [128, 100, 25]
     },
     {

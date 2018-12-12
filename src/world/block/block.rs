@@ -93,10 +93,17 @@ impl Block {
         )
     }
 
-    pub fn build_back_face(&self, translation: &Vec3i, off: u32) -> (Vec<Vertex>, Vec<u32>) {
+    fn get_scale(&self, translate_from_scale: bool) -> Vec3 {
+        match translate_from_scale {
+            true => vec3(self.scale_x.unwrap_or(1.0), self.scale_y.unwrap_or(1.0), self.scale_x.unwrap_or(1.0)),
+            false => vec3(1.0,1.0,1.0)
+        }
+    }
+
+    pub fn build_back_face(&self, translation: &Vec3i, off: u32, translate_from_scale: bool) -> (Vec<Vertex>, Vec<u32>) {
         let uv = Block::get_uv(&self.texture_back, self.scale_x.unwrap_or(1.0), self.scale_y.unwrap_or(1.0));
         let t = self.vi_v(translation);
-        let s = vec3(self.scale_x.unwrap_or(1.0), self.scale_y.unwrap_or(1.0), self.scale_x.unwrap_or(1.0));
+        let s = self.get_scale(translate_from_scale);
         (vec![
             Vertex { position: vec3(-0.5, -0.5, 0.5) * s + t, uv: uv.a, normal: vec3(0.0, 0.0, 1.0) },
             Vertex { position: vec3( 0.5, -0.5, 0.5) * s + t, uv: uv.b, normal: vec3(0.0, 0.0, 1.0) },
@@ -105,10 +112,10 @@ impl Block {
         ], vec![off, off + 1, off + 2, off + 2, off + 3, off])
     }
 
-    pub fn build_front_face(&self, translation: &Vec3i, off: u32) -> (Vec<Vertex>, Vec<u32>) {
+    pub fn build_front_face(&self, translation: &Vec3i, off: u32, translate_from_scale: bool) -> (Vec<Vertex>, Vec<u32>) {
         let uv = Block::get_uv(&self.texture_front, self.scale_x.unwrap_or(1.0), self.scale_y.unwrap_or(1.0));
         let t = self.vi_v(translation);
-        let s = vec3(self.scale_x.unwrap_or(1.0), self.scale_y.unwrap_or(1.0), self.scale_x.unwrap_or(1.0));
+        let s = self.get_scale(translate_from_scale);
         (vec![
             Vertex { position: vec3(-0.5, -0.5, -0.5) * s + t, uv: uv.a, normal: vec3(0.0, 0.0, -1.0) },
             Vertex { position: vec3( 0.5, -0.5, -0.5) * s + t, uv: uv.b, normal: vec3(0.0, 0.0, -1.0) },
@@ -117,10 +124,10 @@ impl Block {
         ], vec![off, off + 2, off + 1, off + 2, off, off + 3])
     }
 
-    pub fn build_left_face(&self, translation: &Vec3i, off: u32) -> (Vec<Vertex>, Vec<u32>) {
+    pub fn build_left_face(&self, translation: &Vec3i, off: u32, translate_from_scale: bool) -> (Vec<Vertex>, Vec<u32>) {
         let uv = Block::get_uv(&self.texture_left, self.scale_x.unwrap_or(1.0), self.scale_y.unwrap_or(1.0));
         let t = self.vi_v(translation);
-        let s = vec3(self.scale_x.unwrap_or(1.0), self.scale_y.unwrap_or(1.0), self.scale_x.unwrap_or(1.0));
+        let s = self.get_scale(translate_from_scale);
         (vec![
             Vertex { position: vec3(-0.5, -0.5, 0.5) * s + t, uv: uv.a, normal: vec3(-1.0, 0.0, 0.0) },
             Vertex { position: vec3( -0.5, -0.5, -0.5) * s + t, uv: uv.b, normal: vec3(-1.0, 0.0, 0.0) },
@@ -129,10 +136,10 @@ impl Block {
         ], vec![off + 2, off, off + 3, off, off + 2, off + 1])
     }
 
-    pub fn build_right_face(&self, translation: &Vec3i, off: u32) -> (Vec<Vertex>, Vec<u32>) {
+    pub fn build_right_face(&self, translation: &Vec3i, off: u32, translate_from_scale: bool) -> (Vec<Vertex>, Vec<u32>) {
         let uv = Block::get_uv(&self.texture_right, self.scale_x.unwrap_or(1.0), self.scale_y.unwrap_or(1.0));
         let t = self.vi_v(translation);
-        let s = vec3(self.scale_x.unwrap_or(1.0), self.scale_y.unwrap_or(1.0), self.scale_x.unwrap_or(1.0));
+        let s = self.get_scale(translate_from_scale);
         (vec![
             Vertex { position: vec3(0.5, -0.5, -0.5) * s + t, uv: uv.a, normal: vec3(1.0, 0.0, 0.0) },
             Vertex { position: vec3( 0.5, -0.5, 0.5) * s + t, uv: uv.b, normal: vec3(1.0, 0.0, 0.0) },
@@ -141,10 +148,10 @@ impl Block {
         ], vec![off + 3, off + 2, off + 1, off + 1, off, off + 3])
     }
 
-    pub fn build_top_face(&self, translation: &Vec3i, off: u32) -> (Vec<Vertex>, Vec<u32>) {
+    pub fn build_top_face(&self, translation: &Vec3i, off: u32, translate_from_scale: bool) -> (Vec<Vertex>, Vec<u32>) {
         let uv = Block::get_uv(&self.texture_top, self.scale_x.unwrap_or(1.0), self.scale_y.unwrap_or(1.0));
         let t = self.vi_v(translation);
-        let s = vec3(self.scale_x.unwrap_or(1.0), self.scale_y.unwrap_or(1.0), self.scale_x.unwrap_or(1.0));
+        let s = self.get_scale(translate_from_scale);
         (vec![
             Vertex { position: vec3(-0.5, 0.5, -0.5) * s + t, uv: uv.a, normal: vec3(0.0, 1.0, 0.0) },
             Vertex { position: vec3( 0.5, 0.5, -0.5) * s + t, uv: uv.b, normal: vec3(0.0, 1.0, 0.0) },
@@ -153,10 +160,10 @@ impl Block {
         ], vec![off + 3, off + 2, off + 1, off + 1, off, off + 3])
     }
 
-    pub fn build_bottom_face(&self, translation: &Vec3i, off: u32) -> (Vec<Vertex>, Vec<u32>) {
+    pub fn build_bottom_face(&self, translation: &Vec3i, off: u32, translate_from_scale: bool) -> (Vec<Vertex>, Vec<u32>) {
         let uv = Block::get_uv(&self.texture_bottom, self.scale_x.unwrap_or(1.0), self.scale_y.unwrap_or(1.0));
         let t = self.vi_v(translation);
-        let s = vec3(self.scale_x.unwrap_or(1.0), self.scale_y.unwrap_or(1.0), self.scale_x.unwrap_or(1.0));
+        let s = self.get_scale(translate_from_scale);
         (vec![
             Vertex { position: vec3(-0.5, -0.5, -0.5) * s + t, uv: uv.a, normal: vec3(0.0, -1.0, 0.0) },
             Vertex { position: vec3( 0.5, -0.5, -0.5) * s + t, uv: uv.b, normal: vec3(0.0, -1.0, 0.0) },

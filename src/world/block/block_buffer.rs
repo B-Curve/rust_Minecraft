@@ -7,6 +7,7 @@ use util::math::{Mat4, Vec3i};
 use world::block::block_database;
 use world::block::block_type::BlockType;
 use std::mem::size_of;
+use std::rc::Rc;
 
 pub struct BlockBuffer {
     gl: Gl,
@@ -17,16 +18,16 @@ pub struct BlockBuffer {
 }
 
 impl BlockBuffer {
-    pub fn new(gl: &Gl, block: &Block) -> BlockBuffer {
+    pub fn new(gl: &Gl, block: Rc<Block>) -> BlockBuffer {
         let (mut vbo, mut vao, mut ibo) = (0, 0, 0);
 
         let funcs = vec![
-            block.build_front_face(&Vec3i::new(0, 0, 0), 0),
-            block.build_back_face(&Vec3i::new(0, 0, 0), 4),
-            block.build_left_face(&Vec3i::new(0, 0, 0), 8),
-            block.build_right_face(&Vec3i::new(0, 0, 0), 12),
-            block.build_top_face(&Vec3i::new(0, 0, 0), 16),
-            block.build_bottom_face(&Vec3i::new(0, 0, 0), 20)
+            block.build_front_face(&Vec3i::new(0, 0, 0), 0, false),
+            block.build_back_face(&Vec3i::new(0, 0, 0), 4, false),
+            block.build_left_face(&Vec3i::new(0, 0, 0), 8, false),
+            block.build_right_face(&Vec3i::new(0, 0, 0), 12, false),
+            block.build_top_face(&Vec3i::new(0, 0, 0), 16, false),
+            block.build_bottom_face(&Vec3i::new(0, 0, 0), 20, false)
         ];
         let mut verts = Vec::new();
         let mut inds = Vec::new();
