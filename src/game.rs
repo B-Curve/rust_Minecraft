@@ -19,11 +19,13 @@ use world::constants::CHUNK_SIZE;
 use world::world::World;
 use std::rc::Rc;
 use world::scenery::lighting::Lighting;
+use util::text::Text;
 
 pub fn start(window: &mut Window, gl: &Gl) {
     let mut camera = Camera::new(vec3(0.0, 8.0, -2.0), vec3(0.0, 0.0, 1.0));
     let mut player = Player::new();
     let mut timer = Timer::new();
+    let mut writer = Text::from_font(gl, "archivo.ttf");
     let block_db = block_database::get();
     let mut world = World::new(gl, camera.position());
     let mut lighting = Lighting::new(gl);
@@ -54,6 +56,8 @@ pub fn start(window: &mut Window, gl: &Gl) {
         lighting.copy_depth_buffer();
         world.bind_block_texture(0);
         lighting.render_lighting(&camera);
+
+        timer.draw_frames(&mut writer, &window);
 
         window.swap_buffers();
     }

@@ -58,8 +58,7 @@ impl Window {
     pub fn gl_context(&mut self) -> Gl {
         unsafe {
             let gl = Gl::load_with(|s| self.window.get_proc_address(s) as *const _);
-            //&gl.Enable(GL::BLEND);
-            //&gl.BlendFunc(GL::SRC_ALPHA, GL::ONE_MINUS_SRC_ALPHA);
+            &gl.BlendFunc(GL::SRC_ALPHA, GL::ONE_MINUS_SRC_ALPHA);
             &gl.FrontFace(GL::CCW);
             &gl.Enable(GL::CULL_FACE);
             &gl.CullFace(GL::BACK);
@@ -67,6 +66,10 @@ impl Window {
             &gl.DepthFunc(GL::LESS);
             gl
         }
+    }
+
+    pub fn size(&self) -> (i32, i32) {
+        self.window.get_size()
     }
 
     pub fn process_events(&mut self, gl: &Gl) {

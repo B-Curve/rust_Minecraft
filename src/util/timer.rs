@@ -1,4 +1,6 @@
 use std::time::{SystemTime, UNIX_EPOCH};
+use util::text::Text;
+use window::Window;
 
 pub struct Timer {
     last_time: u64,
@@ -35,6 +37,14 @@ impl Timer {
         }
 
         self.current_frames += 1;
+    }
+
+    pub fn draw_frames(&self, text: &mut Text, window: &Window) {
+        text.render(
+            &format!("{}", self.fps),
+            10.0, window.size().1 as f32 - 30.0, 0.5,
+            &::math::vec3(1.0, 1.0, 0.0)
+        );
     }
 }
 

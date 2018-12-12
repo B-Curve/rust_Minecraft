@@ -35,7 +35,7 @@ impl World {
                 }
             }
         });
-        t.join();
+        t.join().unwrap_or_else(|_| println!("Thread did not exit properly."));
 
         World { chunk_queue, active_chunks: HashMap::new(), gl: gl.clone(), block_texture }
     }
