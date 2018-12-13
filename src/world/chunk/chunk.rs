@@ -46,6 +46,18 @@ impl Chunk {
         }
     }
 
+    pub fn get_highest_block(&self, pos_xz: (i32, i32)) -> i32 {
+        let (x, z) = pos_xz;
+        let mut highest_block = 0;
+        for y in 0..CHUNK_HEIGHT {
+            if let Some(block_type) = self.block_map.get(&(x, y, z)) {
+                if block_type == &BlockType::Air { continue; }
+                highest_block = y;
+            }
+        }
+        highest_block
+    }
+
     pub fn index(&self) -> (i32, i32) {
         (self.index_position.x, self.index_position.z)
     }

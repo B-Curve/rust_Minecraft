@@ -31,16 +31,23 @@ pub fn start(window: &mut Window, gl: &Gl) {
     let mut lighting = Lighting::new(gl);
     player.set_position(camera.position());
 
-    world.initialize_chunks(&player.position());
+    world.initialize_chunks();
 
     let mut shader = shader::Shader::new(
         gl, shader::Type::Block, false).unwrap();
 
-    lighting.add_light(BlockType::JackOLantern, vec3(2.0, 120.0, 2.0));
-    lighting.add_light(BlockType::Torch, vec3(20.0, 120.0, 2.0));
-    lighting.add_light(BlockType::JackOLantern, vec3(20.0, 120.0, 20.0));
+    lighting.add_light(BlockType::JackOLantern, vec3(2.0, 140.0, 2.0));
+    lighting.add_light(BlockType::Torch, vec3(20.0, 140.0, 2.0));
+    lighting.add_light(BlockType::JackOLantern, vec3(20.0, 140.0, 20.0));
 
     shader.bind();
+
+    'load_spawn: loop {
+        if let Some(pos) = *world.get_player_spawn() {
+            camera.set_position(pos);
+            break 'load_spawn;
+        } else { continue; }
+    }
 
     while window.is_open() {
         timer.tick();
@@ -50,6 +57,7 @@ pub fn start(window: &mut Window, gl: &Gl) {
 
         lighting.bind_framebuffer();
 
+        world.build_chunks(&player.position());
         world.render(&shader, &camera);
         world.take_chunk_from_queue();
 

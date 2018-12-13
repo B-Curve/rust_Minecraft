@@ -61,6 +61,7 @@ impl Camera {
         self.mouse_pos.y = y;
     }
 
+    pub fn set_position(&mut self, pos: Vec3) { self.position = pos; }
     pub fn position(&self) -> &Vec3 { &self.position }
     pub fn forward(&self) -> &Vec3 { &self.front }
     pub fn right(&self) -> &Vec3 { &self.right }

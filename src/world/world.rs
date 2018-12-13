@@ -1,7 +1,7 @@
 use GL::Gl;
 
 use threadpool::ThreadPool;
-use std::sync::{Arc, Mutex, mpsc};
+use std::sync::{Arc, Mutex, MutexGuard, mpsc};
 use std::collections::HashMap;
 
 use util::math::{Vec3, Vec2i, Vec3i};
@@ -18,6 +18,8 @@ pub struct World {
     active_chunks: HashMap<(i32, i32), (Chunk, ChunkBuffer)>,
     gl: Gl,
     block_texture: BlockTexture,
+    player_spawn: Arc<Mutex<Option<Vec3>>>,
+    thread_pool: ThreadPool
 }
 
 impl World {
@@ -25,10 +27,47 @@ impl World {
         let mut chunk_queue: Arc<Mutex<Vec<Chunk>>> = Arc::new(Mutex::new(Vec::new()));
         let block_texture = BlockTexture::new(gl);
 
-        World { chunk_queue, active_chunks: HashMap::new(), gl: gl.clone(), block_texture }
+        World { chunk_queue, active_chunks: HashMap::new(),
+            gl: gl.clone(), block_texture,
+            player_spawn: Arc::new(Mutex::new(None)),
+            thread_pool: ThreadPool::new(4)
+        }
     }
 
-    pub fn initialize_chunks(&mut self, position: &Vec3) {
+    pub fn initialize_chunks(&mut self) {
+        let c = World::chunk_coordinates(&Vec3::new(0.0, 0.0, 0.0));
+        let (xx, zz, mx, mz) = (
+            c.0 - 2,
+            c.1 - 2,
+            c.0 + 2,
+            c.1 + 2
+        );
+
+        let (tx, rx) = mpsc::channel();
+
+        for x in xx..mx {
+            for z in zz..mz {
+                let tx = tx.clone();
+                let mut queue = self.chunk_queue.clone();
+                let mut spawn = self.player_spawn.clone();
+                self.thread_pool.execute(move|| {
+                    let chunk = Chunk::new(Vec3i::new(x, 0, z));
+                    if chunk.index() == (0, 0) {
+                        let spawn_y = chunk.get_highest_block((0, 0));
+                        let mut state = spawn.lock().unwrap();
+                        ::std::mem::replace(&mut *state, Some(Vec3::new(0.0, (spawn_y + 1) as f32, 0.0)));
+                    }
+                    tx.send(queue.lock().unwrap().push(chunk));
+                });
+            }
+        }
+    }
+
+    pub fn get_player_spawn(&self) -> MutexGuard<Option<Vec3>> {
+        self.player_spawn.lock().unwrap()
+    }
+
+    pub fn build_chunks(&mut self, position: &Vec3) {
         let c = World::chunk_coordinates(position);
         let (xx, zz, mx, mz) = (
             c.0 - RENDER_DISTANCE,
@@ -42,9 +81,10 @@ impl World {
 
         for x in xx..mx {
             for z in zz..mz {
+                if self.active_chunks.contains_key(&(x, z)) { continue; }
                 let tx = tx.clone();
                 let mut queue = self.chunk_queue.clone();
-                pool.execute(move|| {
+                self.thread_pool.execute(move|| {
                     let chunk = Chunk::new(Vec3i::new(x, 0, z));
                     tx.send(queue.lock().unwrap().push(chunk));
                 });
