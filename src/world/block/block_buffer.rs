@@ -7,7 +7,7 @@ use util::math::{Mat4, Vec3i};
 use world::block::block_database;
 use world::block::block_type::BlockType;
 use std::mem::size_of;
-use std::rc::Rc;
+use std::sync::Arc;
 
 pub struct BlockBuffer {
     gl: Gl,
@@ -18,7 +18,7 @@ pub struct BlockBuffer {
 }
 
 impl BlockBuffer {
-    pub fn new(gl: &Gl, block: Rc<Block>) -> BlockBuffer {
+    pub fn new(gl: &Gl, block: Arc<Block>) -> BlockBuffer {
         let (mut vbo, mut vao, mut ibo) = (0, 0, 0);
 
         let funcs = vec![

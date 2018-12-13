@@ -1,7 +1,7 @@
 use GL::Gl;
 
-use std::thread;
-use std::sync::{Arc, Mutex};
+use threadpool::ThreadPool;
+use std::sync::{Arc, Mutex, mpsc};
 use std::collections::HashMap;
 
 use util::math::{Vec3, Vec2i, Vec3i};
@@ -21,26 +21,38 @@ pub struct World {
 }
 
 impl World {
-    pub fn new(gl: &Gl, position: &Vec3) -> World {
-        let c = World::chunk_coordinates(position);
-        let (xx, zz, mx, mz) = (c.0 - RENDER_DISTANCE, c.1 - RENDER_DISTANCE, c.0 + RENDER_DISTANCE, c.1 + RENDER_DISTANCE);
+    pub fn new(gl: &Gl) -> World {
         let mut chunk_queue: Arc<Mutex<Vec<Chunk>>> = Arc::new(Mutex::new(Vec::new()));
         let block_texture = BlockTexture::new(gl);
-
-        let mut queue = chunk_queue.clone();
-        let mut t = thread::spawn(move || {
-            for x in xx..mx {
-                for z in zz..mz {
-                    queue.lock().unwrap().push(Chunk::new(Vec3i::new(x, 0, z)));
-                }
-            }
-        });
-        t.join().unwrap_or_else(|_| println!("Thread did not exit properly."));
 
         World { chunk_queue, active_chunks: HashMap::new(), gl: gl.clone(), block_texture }
     }
 
-    pub fn build_chunk_from_queue(&mut self) {
+    pub fn initialize_chunks(&mut self, position: &Vec3) {
+        let c = World::chunk_coordinates(position);
+        let (xx, zz, mx, mz) = (
+            c.0 - RENDER_DISTANCE,
+            c.1 - RENDER_DISTANCE,
+            c.0 + RENDER_DISTANCE,
+            c.1 + RENDER_DISTANCE
+        );
+
+        let pool = ThreadPool::new(4);
+        let (tx, rx) = mpsc::channel();
+
+        for x in xx..mx {
+            for z in zz..mz {
+                let tx = tx.clone();
+                let mut queue = self.chunk_queue.clone();
+                pool.execute(move|| {
+                    let chunk = Chunk::new(Vec3i::new(x, 0, z));
+                    tx.send(queue.lock().unwrap().push(chunk));
+                });
+            }
+        }
+    }
+
+    pub fn take_chunk_from_queue(&mut self) {
         let length = self.chunk_queue.lock().unwrap().len();
         if length > 0 {
             let chunk = self.chunk_queue.lock().unwrap().swap_remove(0);

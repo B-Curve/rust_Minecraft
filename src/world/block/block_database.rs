@@ -10,6 +10,7 @@ use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
 use std::rc::Rc;
+use std::sync::Arc;
 
 const BLOCK_DEFINITION_SOURCE: &'static str = "./metadata/blocks.json";
 
@@ -22,16 +23,34 @@ pub fn get() -> &'static BlockDatabase {
 }
 
 pub struct BlockDatabase {
-    blocks: HashMap<BlockType, Block>
+    blocks: HashMap<BlockType, Arc<Block>>,
+    natural_blocks: HashMap<BlockType, Arc<Block>>,
+    unnatural_blocks: HashMap<BlockType, Arc<Block>>,
+    block_height_map: HashMap<i32, Vec<BlockType>>,
 }
 
 impl BlockDatabase {
     pub fn new() -> BlockDatabase {
-        let mut block_map: HashMap<BlockType, Block> = HashMap::new();
+        let mut block_map: HashMap<BlockType, Arc<Block>> = HashMap::new();
+        let mut natural_blocks: HashMap<BlockType, Arc<Block>> = HashMap::new();
+        let mut unnatural_blocks: HashMap<BlockType, Arc<Block>> = HashMap::new();
+        let mut block_height_map: HashMap<i32, Vec<BlockType>> = HashMap::new();
         for block in BlockDatabase::load_blocks().blocks {
-            block_map.insert(block.m_type, block);
+            let block_arc = Arc::new(block);
+            block_map.insert(block_arc.m_type, block_arc.clone());
+            match block_arc.natural {
+                true => natural_blocks.insert(block_arc.m_type, block_arc.clone()),
+                false => unnatural_blocks.insert(block_arc.m_type, block_arc.clone())
+            };
+            if !block_arc.natural { continue; }
+            for y in block_arc.min_height..block_arc.max_height {
+                let entries = block_height_map.entry(y).or_insert(Vec::new());
+                for r in 0..(100 - block_arc.rarity) {
+                    entries.push(block_arc.m_type.clone())
+                }
+            }
         }
-        BlockDatabase { blocks: block_map }
+        BlockDatabase { blocks: block_map, natural_blocks, unnatural_blocks, block_height_map }
     }
 
     fn load_blocks() -> BlockList {
@@ -43,15 +62,27 @@ impl BlockDatabase {
             .expect(&format!("Failed to parse contents to string for file: {}", BLOCK_DEFINITION_SOURCE))
     }
 
-    pub fn get_block(&self, id: BlockType) -> Rc<Block> {
+    pub fn blocks_at_height(&self, height: i32) -> &Vec<BlockType> {
+        self.block_height_map.get(&height).unwrap()
+    }
+
+    pub fn natural_blocks(&self) -> &HashMap<BlockType, Arc<Block>> {
+        &self.natural_blocks
+    }
+
+    pub fn unnatural_blocks(&self) -> &HashMap<BlockType, Arc<Block>> {
+        &self.unnatural_blocks
+    }
+
+    pub fn get_block(&self, id: BlockType) -> Arc<Block> {
         unsafe {
-            Rc::from_raw(self.blocks.get(&id).unwrap())
+            Arc::clone(self.blocks.get(&id).unwrap())
         }
     }
 
-    pub fn unwrap_block(&self, id: Option<&BlockType>) -> Rc<Block> {
+    pub fn unwrap_block(&self, id: Option<&BlockType>) -> Arc<Block> {
         unsafe {
-            Rc::from_raw(self.blocks.get(id.unwrap_or(&BlockType::Air)).unwrap())
+            Arc::clone(self.blocks.get(id.unwrap_or(&BlockType::Air)).unwrap())
         }
     }
 }

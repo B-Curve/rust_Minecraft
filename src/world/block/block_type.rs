@@ -1,5 +1,7 @@
-use util::math::{Vec2, vec2, Zero};
+use util::math::{Vec2, Vec3i, vec2, Zero};
 use rand::{distributions::{Distribution, Standard}, Rng};
+use world::block::block_database;
+use util::noise;
 
 const IMG_WIDTH: f32 = 384.0;
 const IMG_HEIGHT: f32 = 784.0;
@@ -13,9 +15,17 @@ pub enum BlockType {
     Grass,
     DiamondOre,
     RedstoneOre,
+    GoldOre,
+    IronOre,
+    CoalOre,
     Pumpkin,
     JackOLantern,
-    Torch
+    Torch,
+    Bedrock,
+    Stone,
+    Gravel,
+    Granite,
+    Diorite
 }
 
 pub struct UvCoords {
@@ -51,16 +61,31 @@ impl BlockType {
             d: vec2(x_min, y_max)
         }
     }
-}
 
-impl Distribution<BlockType> for Standard {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> BlockType {
+    pub fn noise_natural(pos: Vec3i) -> BlockType {
         use self::BlockType::*;
-        match rng.gen_range(0, 3) {
-            0 => Grass,
-            1 => Dirt,
-            2 => Torch,
-            _ => Air
-        }
+        let mut blocks = block_database::get().blocks_at_height(pos.y);
+        let len = blocks.len();
+
+        let index = noise::noise_3i(pos, len);
+        blocks.get(index).unwrap_or(&BlockType::Air).clone()
+    }
+
+    pub fn random_natural() -> BlockType {
+        use self::BlockType::*;
+        let mut types = block_database::get().natural_blocks().keys();
+        let len = types.len();
+
+        types.nth(::rand::thread_rng().gen_range(0, len))
+            .unwrap_or(&BlockType::Air).clone()
+    }
+
+    pub fn random_unnatural() -> BlockType {
+        use self::BlockType::*;
+        let mut types = block_database::get().unnatural_blocks().keys();
+        let len = types.len();
+
+        types.nth(::rand::thread_rng().gen_range(0, len))
+            .unwrap_or(&BlockType::Air).clone()
     }
 }

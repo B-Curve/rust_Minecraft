@@ -31,19 +31,14 @@ pub struct Block {
     pub scale_x: Option<f32>,
     pub scale_y: Option<f32>,
     pub light_emission: f32,
-    pub light_color: Option<Vec<f32>>
+    pub light_color: Option<Vec<f32>>,
+    pub natural: bool,
+    pub max_height: i32,
+    pub min_height: i32,
+    pub rarity: i32
 }
 
 impl Block {
-    pub fn new(filename: &str) -> Block {
-        let file = File::open(filename).expect(format!("Failed to open file: {}", filename).as_str());
-        let mut buf_reader = BufReader::new(file);
-        let mut contents = String::new();
-        buf_reader.read_to_string(&mut contents).expect(format!("Failed to read contents of file: {}", filename).as_str());
-        serde_json::from_str::<Block>(&contents)
-            .expect(format!("Failed to parse contents to string for file: {}", filename).as_str())
-    }
-
     pub fn get_light(&self, position: &Vec3) -> BlockLight {
         if let Some(c) = &self.light_color {
             BlockLight {

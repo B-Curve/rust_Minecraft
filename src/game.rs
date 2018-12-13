@@ -22,21 +22,23 @@ use world::scenery::lighting::Lighting;
 use util::text::Text;
 
 pub fn start(window: &mut Window, gl: &Gl) {
-    let mut camera = Camera::new(vec3(0.0, 8.0, -2.0), vec3(0.0, 0.0, 1.0));
+    let mut camera = Camera::new(vec3(0.0, 120.0, -2.0), vec3(0.0, 0.0, 1.0));
     let mut player = Player::new();
     let mut timer = Timer::new();
     let mut writer = Text::from_font(gl, "archivo.ttf");
     let block_db = block_database::get();
-    let mut world = World::new(gl, camera.position());
+    let mut world = World::new(gl);
     let mut lighting = Lighting::new(gl);
     player.set_position(camera.position());
+
+    world.initialize_chunks(&player.position());
 
     let mut shader = shader::Shader::new(
         gl, shader::Type::Block, false).unwrap();
 
-    lighting.add_light(BlockType::JackOLantern, vec3(2.0, 6.0, 2.0));
-    lighting.add_light(BlockType::Torch, vec3(20.0, 6.0, 2.0));
-    lighting.add_light(BlockType::JackOLantern, vec3(20.0, 6.0, 20.0));
+    lighting.add_light(BlockType::JackOLantern, vec3(2.0, 120.0, 2.0));
+    lighting.add_light(BlockType::Torch, vec3(20.0, 120.0, 2.0));
+    lighting.add_light(BlockType::JackOLantern, vec3(20.0, 120.0, 20.0));
 
     shader.bind();
 
@@ -49,7 +51,7 @@ pub fn start(window: &mut Window, gl: &Gl) {
         lighting.bind_framebuffer();
 
         world.render(&shader, &camera);
-        world.build_chunk_from_queue();
+        world.take_chunk_from_queue();
 
         lighting.unbind_framebuffer();
         lighting.apply_lighting(&player.position());

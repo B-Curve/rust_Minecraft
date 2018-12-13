@@ -18,10 +18,25 @@ impl Chunk {
         let mut block_map: HashMap<(i32, i32, i32), BlockType> = HashMap::new();
 
         for x in 0..CHUNK_SIZE {
-        for y in 0..CHUNK_HEIGHT {
         for z in 0..CHUNK_SIZE {
-            block_map.insert((x,y,z), ::rand::random());
-        }}}
+            let mut highest_dirt = -1;
+            for y in -1..CHUNK_HEIGHT {
+                if y == -1 {
+                    block_map.insert((x, y, z), BlockType::Bedrock);
+                    continue;
+                }
+                let block_type = BlockType::noise_natural(Vec3i::new(
+                    x + (index_position.x * CHUNK_SIZE),
+                    y,
+                    z + (index_position.z * CHUNK_SIZE)
+                ));
+                if block_type == BlockType::Dirt { highest_dirt = y; }
+                block_map.insert((x,y,z), block_type);
+            }
+            if highest_dirt > 0 {
+                block_map.entry((x, highest_dirt, z)).and_modify(|b| *b = BlockType::Grass);
+            }
+        }}
 
         Chunk {
             mesh: ChunkMesh::new(&block_map),
