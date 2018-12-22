@@ -59,6 +59,7 @@ pub fn start(window: &mut Window, gl: &Gl) {
 
         skybox.draw(&camera.view(), &camera.projection());
         timer.draw_frames(&mut writer, &window);
+        player.draw_position(&mut writer);
 
         window.swap_buffers();
     }

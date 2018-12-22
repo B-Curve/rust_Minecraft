@@ -2,6 +2,8 @@ use math::{Vec3, vec3};
 use util::controls::{Controls, KeyState, KeyAction};
 use std::ops::{Sub, Add};
 use camera::Camera;
+use util::text::Text;
+use window::Window;
 
 pub const CROUCH_HEIGHT_DECREASE: f32 = 0.44;
 pub const FRAME_CONSTANT: f32 = 200.0;
@@ -21,6 +23,13 @@ impl Player {
 
     pub fn is_crouched(&self) -> bool { self.is_crouched }
     pub fn set_crouched(&mut self, is: bool) { self.is_crouched = is; }
+
+    pub fn draw_position(&self, text: &mut Text) {
+        text.render(
+            &format!("X: {} | Y: {} | Z: {}", self.position.x as i32, self.position.y as i32, self.position.z as i32),
+            10.0, 10.0, 0.5, &vector!(1.0, 1.0, 0.0)
+        );
+    }
 
     pub fn move_speed(&self) -> f32 {
         (self.move_speed * match self.is_sprinting {
