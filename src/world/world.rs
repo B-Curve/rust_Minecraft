@@ -30,7 +30,7 @@ impl World {
         World { chunk_queue, active_chunks: HashMap::new(),
             gl: gl.clone(), block_texture,
             player_spawn: Arc::new(Mutex::new(None)),
-            thread_pool: ThreadPool::new(4)
+            thread_pool: ThreadPool::new(2)
         }
     }
 

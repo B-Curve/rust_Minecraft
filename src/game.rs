@@ -11,12 +11,12 @@ use world::world::World;
 use GL::Gl;
 
 pub fn start(window: &mut Window, gl: &Gl) {
-    let mut camera = Camera::new(vec3(0.0, 120.0, -2.0), vec3(0.0, 0.0, 1.0));
+    let mut camera = Camera::new(vec3(0.0, 120.0, -2.0), vec3(0.0, 0.0, 1.0), window.framebuffer_size());
     let mut player = Player::new();
     let mut timer = Timer::new();
-    let mut writer = Text::from_font(gl, "archivo.ttf");
+    let mut writer = Text::from_font(gl, "archivo.ttf", window.framebuffer_size());
     let mut world = World::new(gl);
-    let mut lighting = Lighting::new(gl);
+    let mut lighting = Lighting::new(gl, window.framebuffer_size());
     let skybox = SkyBox::new(gl);
     player.set_position(camera.position());
 

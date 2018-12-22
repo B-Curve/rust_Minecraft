@@ -20,8 +20,8 @@ pub struct Lighting {
 }
 
 impl Lighting {
-    pub fn new(gl: &Gl) -> Lighting {
-        let buffer = DeferredBuffer::new(gl);
+    pub fn new(gl: &Gl, framebuffer_size: (i32, i32)) -> Lighting {
+        let buffer = DeferredBuffer::new(gl, framebuffer_size);
         let lighting_shader = Shader::new(gl, ShaderType::Deferred, false).unwrap();
         let item_shader = Shader::new(gl, ShaderType::Torch, false).unwrap();
 

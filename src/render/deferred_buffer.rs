@@ -33,11 +33,13 @@ pub struct DeferredBuffer {
     rbo_depth: u32,
     vao: u32,
     vbo: u32,
-    shader: Shader
+    shader: Shader,
+    framebuffer_size: (i32, i32)
 }
 
 impl DeferredBuffer {
-    pub fn new(gl: &Gl) -> DeferredBuffer {
+    pub fn new(gl: &Gl, framebuffer_size: (i32, i32)) -> DeferredBuffer {
+        let (width, height) = framebuffer_size;
         let (mut g_buffer, mut g_position, mut g_normal, mut g_albedo, mut rbo_depth, mut vao, mut vbo) = (0, 0, 0, 0, 0, 0, 0);
 
         unsafe {
@@ -58,7 +60,7 @@ impl DeferredBuffer {
 
             gl.GenTextures(1, &mut g_position);
             gl.BindTexture(GL::TEXTURE_2D, g_position);
-            gl.TexImage2D(GL::TEXTURE_2D, 0, GL::RGB16F as i32, 1920, 1080, 0, GL::RGB, GL::FLOAT, ::std::ptr::null());
+            gl.TexImage2D(GL::TEXTURE_2D, 0, GL::RGB16F as i32, width, height, 0, GL::RGB, GL::FLOAT, ::std::ptr::null());
             gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_MIN_FILTER, GL::NEAREST as i32);
             gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_MAG_FILTER, GL::NEAREST as i32);
             gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_WRAP_S, GL::CLAMP_TO_EDGE as i32);
@@ -67,14 +69,14 @@ impl DeferredBuffer {
 
             gl.GenTextures(1, &mut g_normal);
             gl.BindTexture(GL::TEXTURE_2D, g_normal);
-            gl.TexImage2D(GL::TEXTURE_2D, 0, GL::RGB16F as i32, 1920, 1080, 0, GL::RGB, GL::FLOAT, ::std::ptr::null());
+            gl.TexImage2D(GL::TEXTURE_2D, 0, GL::RGB16F as i32, width, height, 0, GL::RGB, GL::FLOAT, ::std::ptr::null());
             gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_MIN_FILTER, GL::NEAREST as i32);
             gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_MAG_FILTER, GL::NEAREST as i32);
             gl.FramebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT1, GL::TEXTURE_2D, g_normal, 0);
 
             gl.GenTextures(1, &mut g_albedo);
             gl.BindTexture(GL::TEXTURE_2D, g_albedo);
-            gl.TexImage2D(GL::TEXTURE_2D, 0, GL::RGBA as i32, 1920, 1080, 0, GL::RGBA, GL::UNSIGNED_BYTE, ::std::ptr::null());
+            gl.TexImage2D(GL::TEXTURE_2D, 0, GL::RGBA as i32, width, height, 0, GL::RGBA, GL::UNSIGNED_BYTE, ::std::ptr::null());
             gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_MIN_FILTER, GL::NEAREST as i32);
             gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_MAG_FILTER, GL::NEAREST as i32);
             gl.FramebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT2, GL::TEXTURE_2D, g_albedo, 0);
@@ -84,7 +86,7 @@ impl DeferredBuffer {
 
             gl.GenRenderbuffers(1, &mut rbo_depth);
             gl.BindRenderbuffer(GL::RENDERBUFFER, rbo_depth);
-            gl.RenderbufferStorage(GL::RENDERBUFFER, GL::DEPTH_COMPONENT, 1920, 1080);
+            gl.RenderbufferStorage(GL::RENDERBUFFER, GL::DEPTH_COMPONENT, width, height);
             gl.FramebufferRenderbuffer(GL::FRAMEBUFFER, GL::DEPTH_ATTACHMENT, GL::RENDERBUFFER, rbo_depth);
             if gl.CheckFramebufferStatus(GL::FRAMEBUFFER) != GL::FRAMEBUFFER_COMPLETE {
                 println!("Framebuffer not complete!");
@@ -100,7 +102,7 @@ impl DeferredBuffer {
 
         DeferredBuffer {
             gl: gl.clone(), g_buffer, g_position,
-            g_normal, g_albedo, rbo_depth, vao, vbo, shader
+            g_normal, g_albedo, rbo_depth, vao, vbo, shader, framebuffer_size
         }
     }
 
@@ -159,7 +161,11 @@ impl DeferredBuffer {
         unsafe {
             self.gl.BindFramebuffer(GL::READ_FRAMEBUFFER, self.g_buffer);
             self.gl.BindFramebuffer(GL::DRAW_FRAMEBUFFER, 0);
-            self.gl.BlitFramebuffer(0, 0, 1920, 1080, 0, 0, 1920, 1080, GL::DEPTH_BUFFER_BIT, GL::NEAREST);
+            self.gl.BlitFramebuffer(0, 0,
+                self.framebuffer_size.0, self.framebuffer_size.1,
+                0, 0,
+                self.framebuffer_size.0, self.framebuffer_size.1,
+                GL::DEPTH_BUFFER_BIT, GL::NEAREST);
             self.gl.BindFramebuffer(GL::FRAMEBUFFER, 0);
         }
     }
