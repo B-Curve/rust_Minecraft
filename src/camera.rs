@@ -6,7 +6,7 @@ lazy_static! {
 }
 
 impl Camera {
-    pub fn new(position: Vec3, front: Vec3) -> Camera {
+    pub fn new(position: Vec3, front: Vec3, screen_size: (i32, i32)) -> Camera {
         let right = normalize(cross(front, *WORLD_UP));
         let up = normalize(cross(right, front));
         Camera {
@@ -19,7 +19,7 @@ impl Camera {
             mouse_speed: 0.05,
             model: Mat4::one(),
             view: ext::look_at(position, position + front, *WORLD_UP),
-            projection: ext::perspective(radians(80.0), 1920.0/1080.0, 0.1, 1000.0)
+            projection: ext::perspective(radians(80.0), screen_size.0 as f32/screen_size.1 as f32, 0.1, 1000.0)
         }
     }
 

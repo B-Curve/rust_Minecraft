@@ -31,14 +31,14 @@ pub struct Text {
 }
 
 impl Text {
-    pub fn from_font(gl: &Gl, file: &str) -> Text {
+    pub fn from_font(gl: &Gl, file: &str, screen_size: (i32, i32)) -> Text {
         unsafe {
             let mut shader = Shader::new(gl, ShaderType::Text, false).unwrap();
             let mut characters = HashMap::new();
             let (mut vao, mut vbo) = (0, 0);
 
             shader.bind();
-            shader.mat_4("projection", &ortho(0.0, 1920.0, 0.0, 1080.0, -1.0, 100.0));
+            shader.mat_4("projection", &ortho(0.0, screen_size.0 as f32, 0.0, screen_size.1 as f32, -1.0, 100.0));
 
             let face = resources::load_font(file).unwrap();
             face.set_pixel_sizes(0, 48);
@@ -64,7 +64,7 @@ impl Text {
                     texture_id: texture,
                     size: Vec2i::new(bmp.width(), bmp.rows()),
                     bearing: Vec2i::new(g.bitmap_left(), g.bitmap_top()),
-                    advance: g.advance().x,
+                    advance: g.advance().x as i32,
                     gl: gl.clone()
                 };
                 characters.insert(c as char, ch);
