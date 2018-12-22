@@ -171,7 +171,11 @@ impl DeferredBuffer {
         for (light, buffer) in lights.iter() {
             let block = block_database::get().get_block(light.block_type);
             shader.vec3("lightColor", &light.color);
-            buffer.draw(shader, &block.get_model(&light.position, 0.0, 0.0));
+            let block_scale = block.model_scale.unwrap_or(1.0);
+            buffer.draw(shader, &scale(
+                &block.get_model(&light.position, 0.0, 0.0),
+                vector!(block_scale, block_scale, block_scale)
+            ));
         }
     }
 }

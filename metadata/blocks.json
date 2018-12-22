@@ -26,7 +26,7 @@
       "natural": true,
       "max_height": 130,
       "min_height": 5,
-      "rarity": 12
+      "rarity": 16
     },
     {
       "m_type": "DiamondOre",
@@ -166,7 +166,7 @@
       "natural": true,
       "max_height": 120,
       "min_height": 0,
-      "rarity": 12
+      "rarity": 8
     },
     {
       "m_type": "GoldOre",
@@ -251,7 +251,7 @@
       "natural": true,
       "max_height": 110,
       "min_height": 0,
-      "rarity": 38
+      "rarity": 64
     },
     {
       "m_type": "Diorite",
@@ -268,7 +268,26 @@
       "natural": true,
       "max_height": 110,
       "min_height": 0,
-      "rarity": 38
+      "rarity": 68
+    },
+    {
+      "m_type": "Sun",
+      "id": 16,
+      "opaque": false,
+      "has_texture": true,
+      "texture_top": [7, 1],
+      "texture_bottom": [7, 1],
+      "texture_front": [7, 1],
+      "texture_back": [7, 1],
+      "texture_left": [7, 1],
+      "texture_right": [7, 1],
+      "light_emission": 2400000.0,
+      "light_color": [255, 255, 102],
+      "natural": false,
+      "max_height": 0,
+      "min_height": 0,
+      "rarity": 0,
+      "model_scale": 8.0
     }
   ]
 }

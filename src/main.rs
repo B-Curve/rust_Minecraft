@@ -16,7 +16,7 @@ extern crate threadpool;
 mod game;
 mod window;
 mod shader;
-mod util;
+#[macro_use] mod util;
 mod camera;
 mod world;
 mod player;

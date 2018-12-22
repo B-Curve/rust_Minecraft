@@ -35,7 +35,8 @@ pub struct Block {
     pub natural: bool,
     pub max_height: i32,
     pub min_height: i32,
-    pub rarity: i32
+    pub rarity: i32,
+    pub model_scale: Option<f32>
 }
 
 impl Block {

@@ -2,11 +2,18 @@
 
 in vec4 pos0;
 
-uniform vec3 lightPos;
+const int NR_LIGHTS = 32;
+
+struct Light {
+    vec3 position;
+};
+
+uniform Light lights[NR_LIGHTS];
 uniform float far_plane;
 void main()
 {
-    float lightDistance = length(pos0.xyz - lightPos);
+    Light light0 = lights[0];
+    float lightDistance = length(pos0.xyz - light0.position);
     lightDistance = lightDistance / far_plane;
     gl_FragDepth = lightDistance;
 }

@@ -25,7 +25,8 @@ pub enum BlockType {
     Stone,
     Gravel,
     Granite,
-    Diorite
+    Diorite,
+    Sun
 }
 
 pub struct UvCoords {

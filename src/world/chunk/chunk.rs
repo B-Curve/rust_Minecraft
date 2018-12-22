@@ -5,6 +5,8 @@ use world::block::block_type::BlockType;
 use world::constants::CHUNK_SIZE;
 use world::constants::CHUNK_HEIGHT;
 use util::vertex::Vertex;
+use util::timer::StopWatch;
+use util::noise::height;
 
 pub struct Chunk {
     mesh: ChunkMesh,
@@ -16,11 +18,12 @@ pub struct Chunk {
 impl Chunk {
     pub fn new(index_position: Vec3i) -> Chunk {
         let mut block_map: HashMap<(i32, i32, i32), BlockType> = HashMap::new();
+        let world_position = Vec3i::new(index_position.x * CHUNK_SIZE, 0, index_position.z * CHUNK_SIZE);
 
         for x in 0..CHUNK_SIZE {
         for z in 0..CHUNK_SIZE {
             let mut highest_dirt = -1;
-            for y in -1..CHUNK_HEIGHT {
+            for y in -1..(height(world_position.x + x, world_position.z + z) as i32) {
                 if y == -1 {
                     block_map.insert((x, y, z), BlockType::Bedrock);
                     continue;
@@ -38,9 +41,10 @@ impl Chunk {
             }
         }}
 
+
         Chunk {
             mesh: ChunkMesh::new(&block_map),
-            world_position: Vec3i::new(index_position.x * CHUNK_SIZE, 0, index_position.z * CHUNK_SIZE),
+            world_position,
             index_position,
             block_map
         }

@@ -34,6 +34,10 @@ impl Lighting {
         Lighting { buffer, gl: gl.clone(), item_shader, lights: HashMap::new() }
     }
 
+    pub fn get_light_vec(&self) -> Vec<&BlockLight> {
+        self.lights.iter().map(|(_, (l, b))| l).collect::<Vec<&BlockLight>>()
+    }
+
     pub fn add_light(&mut self, block_type: BlockType, position: Vec3) {
         let (x, y, z) = (position.x as i32, position.y as i32, position.z as i32);
         let block = block_database::get().get_block(block_type);
@@ -53,7 +57,7 @@ impl Lighting {
     pub fn apply_lighting(&self, position: &Vec3) {
         self.buffer.apply_lighting(
             position,
-            &self.lights.iter().map(|(_, (l, b))| l).collect::<Vec<&BlockLight>>());
+            &self.get_light_vec());
     }
 
     pub fn copy_depth_buffer(&self) {

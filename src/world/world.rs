@@ -95,11 +95,14 @@ impl World {
     pub fn take_chunk_from_queue(&mut self) {
         let length = self.chunk_queue.lock().unwrap().len();
         if length > 0 {
-            let chunk = self.chunk_queue.lock().unwrap().swap_remove(0);
-            let buffer = ChunkBuffer::new(&self.gl, chunk.verts(), chunk.inds());
-            self.active_chunks.insert(chunk.index(), (
-                chunk, buffer
-            ));
+            for i in 0..length {
+                if i >= self.chunk_queue.lock().unwrap().len() { break; }
+                let chunk = self.chunk_queue.lock().unwrap().swap_remove(i);
+                let buffer = ChunkBuffer::new(&self.gl, chunk.verts(), chunk.inds());
+                self.active_chunks.insert(chunk.index(), (
+                    chunk, buffer
+                ));
+            }
         }
     }
 

@@ -48,11 +48,29 @@ impl Timer {
     }
 }
 
+pub struct StopWatch {
+    start: u64
+}
+
+impl StopWatch {
+    pub fn start() -> StopWatch {
+        StopWatch {
+            start: get_elapsed_time()
+        }
+    }
+
+    pub fn since_start(&self) -> u64 {
+        get_elapsed_time() - self.start
+    }
+}
+
 fn get_elapsed_time() -> u64 {
     let start = SystemTime::now();
 
     let since_epoch = start.duration_since(UNIX_EPOCH)
         .expect("Time went backwards");
 
-    since_epoch.as_secs() * 1000 + since_epoch.subsec_nanos() as u64 / 1_000_000
+    since_epoch.as_secs() * 1000
+        + since_epoch.subsec_nanos() as u64 / 1_000_000
+        + since_epoch.subsec_nanos() as u64 / 100_000_000
 }
